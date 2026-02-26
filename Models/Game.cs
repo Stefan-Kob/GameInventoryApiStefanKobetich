@@ -1,5 +1,6 @@
 namespace GameInventoryApiStefanKobetich.Models;
 
+// Simple model representing a game in the inventory
 public class Game
 {
     public int Id { get; set; }

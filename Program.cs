@@ -19,6 +19,13 @@ List<Game> games = new()
     new Game { Id = 4, Name = "VTOL VR", Quantity = 1 }
 };
 
+// In-memory list to store wallets
+List<Wallet> wallets = new()
+{
+    new Wallet { Id = 1, Balance = 100 },
+    new Wallet { Id = 2, Balance = 50 }
+};
+
 // Use custom middleware to check for API key
 app.UseApiKey();
     
@@ -43,6 +50,42 @@ app.MapPost("/games", (Game game) =>
 
     // Return the created game with a 201 status code
     return Results.Created($"/games/{game.Id}", game);
+});
+
+// Post endpoint to transfer funds between wallets
+app.MapPost("/transfer", (dynamic req) =>
+{
+    int fromId = req.fromId;
+    int toId = req.toId;
+    decimal amount = req.amount;
+
+    if (amount <= 0)
+    {
+        return Results.BadRequest(new { status = "Failed", error = "InvalidAmount" });
+    }
+
+    // Validate wallets and funds before making any changes
+    var fromWallet = wallets.FirstOrDefault(w => w.Id == fromId);
+    var toWallet = wallets.FirstOrDefault(w => w.Id == toId);
+
+    if (fromWallet == null || toWallet == null)
+    {
+        return Results.BadRequest(new { status = "Failed", error = "AccountNotFound" });
+    }
+
+    if (fromWallet.Balance < amount)
+    {
+        return Results.BadRequest(new { status = "Failed", error = "InsufficientFunds" });
+    }
+
+    // Atomic updating -> update after validation to prevent partial updates
+    fromWallet.Balance -= amount;
+    toWallet.Balance += amount;
+
+    // This is just a simulation, but after this point we would also change the inventory, 
+    // and any other factors related to the wallet, possible account, and game
+
+    return Results.Ok(new { status = "Success" });
 });
 
 // Only using swagger in development
