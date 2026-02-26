@@ -53,11 +53,11 @@ app.MapPost("/games", (Game game) =>
 });
 
 // Post endpoint to transfer funds between wallets
-app.MapPost("/transfer", (dynamic req) =>
+app.MapPost("/transfer", (TransferReq req) =>
 {
-    int fromId = req.fromId;
-    int toId = req.toId;
-    decimal amount = req.amount;
+    int fromId = req.FromId;
+    int toId = req.ToId;
+    decimal amount = req.Amount;
 
     if (amount <= 0)
     {
