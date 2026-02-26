@@ -3,6 +3,9 @@ namespace GameInventoryApiStefanKobetich.Middleware;
 // Middleware to check for API key in the header of incoming requests
 public class Middleware(RequestDelegate next)
 {
+    const string apiKey = "MIDTERM_KEY_123";
+    const string apiHeader = "X-Api-Key";
+
     // The API key is expected to be in the header "X-Api-Key" and must match "MIDTERM_KEY_123"
     private readonly RequestDelegate _next = next;
 
@@ -17,7 +20,7 @@ public class Middleware(RequestDelegate next)
             return;
         }
 
-        if (!ctx.Request.Headers.TryGetValue("X-Api-Key", out var key) || key != "MIDTERM_KEY_123")
+        if (!ctx.Request.Headers.TryGetValue(apiHeader, out var key) || key != apiKey)
         {
             ctx.Response.StatusCode = 401;
             await ctx.Response.WriteAsJsonAsync(new { error = "Unauthorized", message = "Missing or invalid API key." });
