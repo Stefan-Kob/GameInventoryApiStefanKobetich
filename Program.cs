@@ -1,4 +1,5 @@
 using GameInventoryApiStefanKobetich.Models;
+using GameInventoryApiStefanKobetich.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +14,14 @@ var app = builder.Build();
 List<Game> games = new()
 {
     new Game { Id = 1, Name = "Minecraft", Quantity = 10 },
-    new Game { Id = 2, Name = "Tetris", Quantity = 5 }
+    new Game { Id = 2, Name = "Far Cry 4", Quantity = 5 },
+    new Game { Id = 3, Name = "Red Dead Redemption 2", Quantity = 8 },
+    new Game { Id = 4, Name = "VTOL VR", Quantity = 1 }
 };
 
+// Use custom middleware to check for API key
+app.UseApiKey();
+    
 // Get endpoint to retrieve all games
 app.MapGet("/games", () => games);
 
